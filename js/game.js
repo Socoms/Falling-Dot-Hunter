@@ -86,13 +86,19 @@ function getRandomColor() {
 
 // 파티클 생성 함수
 function createParticles(x, y, color) {
-    for (let i = 0; i < 8; i++) {
+    // 파티클 개수 제한 (최대 50개)
+    if (particles.length > 50) {
+        particles.splice(0, particles.length - 40); // 오래된 파티클 제거
+    }
+    
+    for (let i = 0; i < 6; i++) { // 파티클 개수 줄임 (8 → 6)
         particles.push({
             x: x,
             y: y,
-            vx: (Math.random() - 0.5) * 10,
-            vy: (Math.random() - 0.5) * 10,
-            life: 30,
+            vx: (Math.random() - 0.5) * 8, // 속도 줄임
+            vy: (Math.random() - 0.5) * 8,
+            life: 20, // 생명주기 단축 (30 → 20)
+            maxLife: 20, // 최대 생명주기 추가
             color: color
         });
     }
@@ -105,8 +111,14 @@ function updateParticles() {
         p.x += p.vx;
         p.y += p.vy;
         p.life--;
-        p.vx *= 0.98;
-        p.vy *= 0.98;
+        p.vx *= 0.95; // 감속 증가 (0.98 → 0.95)
+        p.vy *= 0.95;
+        
+        // 파티클이 화면 밖으로 나가면 즉시 제거
+        if (p.x < -50 || p.x > canvas.width + 50 || p.y < -50 || p.y > canvas.height + 50) {
+            particles.splice(i, 1);
+            continue;
+        }
         
         if (p.life <= 0) {
             particles.splice(i, 1);
@@ -118,10 +130,11 @@ function updateParticles() {
 function drawParticles() {
     particles.forEach(p => {
         ctx.save();
-        ctx.globalAlpha = p.life / 30;
+        // 투명도 계산을 maxLife 기준으로 수정
+        ctx.globalAlpha = p.life / p.maxLife;
         ctx.fillStyle = p.color;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); // 크기 줄임 (3 → 2)
         ctx.fill();
         ctx.restore();
     });
