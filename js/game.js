@@ -755,10 +755,10 @@ canvas.addEventListener("click", function (e) {
         const dy = mouseY - circle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         
-        console.log(`원 ${i}: 위치(${circle.x}, ${circle.y}), 반지름: ${circle.r}, 거리: ${distance}, 판정: ${distance < circle.r + 5 ? '성공' : '실패'}`);
+        console.log(`원 ${i}: 위치(${circle.x}, ${circle.y}), 반지름: ${circle.r}, 거리: ${distance}, 판정: ${distance < circle.r + 2 ? '성공' : '실패'}`);
         
-        // 클릭 판정을 더 관대하게 (5픽셀 여유)
-        if (distance < circle.r + 5) {
+        // 클릭 판정 (2픽셀 여유로 조정)
+        if (distance < circle.r + 2) {
             // 클릭 성공
             const points = colorScores[circle.color] || 1;
             score += points;
@@ -772,6 +772,7 @@ canvas.addEventListener("click", function (e) {
             // 효과음 재생 (간단한 beep)
             playSound();
             
+            // 하나의 원만 클릭되도록 즉시 반복문 종료
             console.log(`클릭 성공! 점수: +${points}, 총 점수: ${score}`);
             break;
         }
