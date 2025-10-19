@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Falling Dot Hunter - 떨어지는 점 사냥꾼</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Falling Dot Hunter</h1>
+        
+        <!-- 모드 선택 화면 -->
+        <div id="modeSelection" class="mode-selection">
+            <h2>게임 모드를 선택하세요</h2>
+            <div class="mode-buttons">
+                <button class="mode-btn" data-mode="timer">
+                    <div class="mode-icon">⏰</div>
+                    <div class="mode-title">타이머 모드</div>
+                    <div class="mode-desc">60초 동안 최대한 많은 점수 획득</div>
+                </button>
+                <button class="mode-btn" data-mode="infinite">
+                    <div class="mode-icon">♾️</div>
+                    <div class="mode-title">무한도전 모드</div>
+                    <div class="mode-desc">시간 제한 없이 계속 플레이 (난이도 상한선 있음)</div>
+                </button>
+                <button class="mode-btn" data-mode="leaderboard">
+                    <div class="mode-icon">🏆</div>
+                    <div class="mode-title">기록 모드</div>
+                    <div class="mode-desc">60초 동안 플레이하며 리더보드에 기록 갱신</div>
+                </button>
+            </div>
+            <div class="additional-options">
+                <button id="viewLeaderboard" class="view-leaderboard-btn">📊 리더보드 보기</button>
+            </div>
+        </div>
+        
+        <!-- 메인메뉴 버튼 (독립적인 구역) -->
+        <div class="menu-bookmark">
+            <button id="menuToggle" class="back-btn hamburger-menu">☰</button>
+        </div>
+        
+        <!-- 뒤돌아가기 버튼 (오른쪽) -->
+        <div class="back-bookmark">
+            <button id="backButton" class="back-btn back-menu">←</button>
+        </div>
+        
+        <!-- 사이드바 메뉴 -->
+        <div id="sidebarMenu" class="sidebar-menu">
+            <div class="sidebar-header">
+                <h3>메뉴</h3>
+                <button id="closeMenu" class="close-btn">×</button>
+            </div>
+            <div class="sidebar-content">
+                <div class="menu-section">
+                    <h4>설정</h4>
+                    <button class="menu-item" id="gameSettings">
+                        <span class="menu-icon">⚙️</span>
+                        <span class="menu-text">게임 설정</span>
+                    </button>
+                    <button class="menu-item" id="help">
+                        <span class="menu-icon">❓</span>
+                        <span class="menu-text">도움말</span>
+                    </button>
+                </div>
+                
+                <div class="menu-section">
+                    <h4>정보</h4>
+                    <button class="menu-item" id="developerInfo">
+                        <span class="menu-icon">👨‍💻</span>
+                        <span class="menu-text">개발자 정보</span>
+                    </button>
+                    <button class="menu-item" id="versionInfo">
+                        <span class="menu-icon">📋</span>
+                        <span class="menu-text">버전 정보</span>
+                    </button>
+                    <button class="menu-item" id="easterEgg" style="display: none;">
+                        <span class="menu-icon">🥚</span>
+                        <span class="menu-text">이스터에그</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 사이드바 오버레이 -->
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+        
+        <!-- 게임 설정 창 -->
+        <div id="settingsModal" class="settings-modal">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h2>⚙️ 게임 설정</h2>
+                    <button id="closeSettings" class="close-settings-btn">×</button>
+                </div>
+                <div class="settings-body">
+                    <div class="settings-section">
+                        <h3>🔊 사운드</h3>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" id="soundEnabled" class="setting-checkbox" checked>
+                                <span class="setting-text">효과음 켜기</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="settings-footer">
+                        <button id="saveSettings" class="save-settings-btn" disabled>저장하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 개발자 정보 창 -->
+        <div id="developerModal" class="developer-modal">
+            <div class="developer-content">
+                <div class="developer-header">
+                    <h2>👨‍💻 개발자 정보</h2>
+                    <button id="closeDeveloper" class="close-developer-btn">×</button>
+                </div>
+                <div class="developer-body">
+                    <div class="dev-card">
+                        <div class="dev-icon-large">👨‍💻</div>
+                        <div class="dev-name-large">김태원</div>
+                        <div class="dev-school-large">신라대학교 컴퓨터소프트웨어공학부</div>
+                        <div class="dev-id-large">201995026</div>
+                        <div class="dev-contact-large">
+                            <div class="contact-item-large">
+                                <span class="contact-icon">📞</span>
+                                <span class="contact-text">010-9237-0597</span>
+                            </div>
+                            <div class="contact-item-large">
+                                <span class="contact-icon">📧</span>
+                                <span class="contact-text">lolyo14@naver.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 버전 정보 창 -->
+        <div id="versionModal" class="version-modal">
+            <div class="version-content">
+                <div class="version-header">
+                    <h2>📋 버전 정보</h2>
+                    <button id="closeVersion" class="close-version-btn">×</button>
+                </div>
+                <div class="version-body">
+                    <div class="version-card">
+                        <div class="version-icon">🎮</div>
+                        <div class="version-title">Falling Dot Hunter</div>
+                        <div class="version-details">
+                            <div class="version-item">
+                                <span class="version-label">현재 버전:</span>
+                                <span class="version-value current">Beta 1.0.0</span>
+                            </div>
+                            <div class="version-item">
+                                <span class="version-label">최신 버전:</span>
+                                <span class="version-value latest">Beta 1.0.0</span>
+                            </div>
+                            <div class="version-item">
+                                <span class="version-label">업데이트:</span>
+                                <span class="version-value">2025.10.20</span>
+                            </div>
+                        </div>
+                        <div class="version-features">
+                            <h4>주요 기능</h4>
+                            <ul>
+                                <li>3가지 게임 모드 (타이머, 무한도전, 기록)</li>
+                                <li>8가지 색상의 떨어지는 원</li>
+                                <li>실시간 리더보드</li>
+                                <li>효과음 및 시각적 효과</li>
+                                <li>반응형 디자인</li>
+                            </ul>
+                        </div>
+                        <div class="version-status">
+                            <div class="status-indicator up-to-date">✅ 최신 버전입니다</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 이스터에그 창 -->
+        <div id="easterEggModal" class="easter-egg-modal">
+            <div class="easter-egg-content">
+                <div class="easter-egg-header">
+                    <h2>🥚 이스터에그 발견!</h2>
+                    <button id="closeEasterEgg" class="close-easter-egg-btn">×</button>
+                </div>
+                <div class="easter-egg-body">
+                    <div class="easter-egg-animation">
+                        <div class="egg">🥚</div>
+                        <div class="crack">💥</div>
+                        <div class="surprise">🎉</div>
+                    </div>
+                    <div class="easter-egg-text">
+                        <h3>축하합니다! 이스터에그를 발견하셨습니다!</h3>
+                        <p>개발자 아이콘을 10번 클릭하셨네요! 👏</p>
+                        <div class="secret-message">
+                            <p>"게임을 즐겨주셔서 감사합니다! 🎮</p>
+                            <p>더 많은 재미있는 게임을 만들어보겠습니다! 💪"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 도움말 창 -->
+        <div id="helpModal" class="help-modal">
+            <div class="help-content">
+                <div class="help-header">
+                    <h2>🎮 게임 도움말</h2>
+                    <button id="closeHelp" class="close-help-btn">×</button>
+                </div>
+                <div class="help-body">
+                    <div class="help-section">
+                        <h3>🎯 게임 목표</h3>
+                        <p>떨어지는 원을 클릭해서 최대한 많은 점수를 획득하세요!</p>
+                        <ul>
+                            <li>60초 안에 최대한 많은 점수를 얻으세요!</li>
+                            <li>색상에 따라 다른 점수를 획득할 수 있습니다</li>
+                            <li>원이 화면 아래로 떨어지면 기회를 잃습니다</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h3>🎨 색상별 점수</h3>
+                        <div class="color-scores-grid">
+                            <div class="color-score-item red">빨강: 3점</div>
+                            <div class="color-score-item green">초록: 2점</div>
+                            <div class="color-score-item purple">보라: 4점</div>
+                            <div class="color-score-item yellow">노랑: 5점</div>
+                            <div class="color-score-item blue">파랑: 1점</div>
+                            <div class="color-score-item orange">주황: 2점</div>
+                            <div class="color-score-item teal">청록: 1점</div>
+                            <div class="color-score-item pink">분홍: 3점</div>
+                        </div>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h3>🎮 조작법</h3>
+                        <div class="controls-list">
+                            <div class="control-item">
+                                <span class="control-icon">🖱️</span>
+                                <span class="control-text">마우스 클릭: 원 클릭하여 점수 획득</span>
+                            </div>
+                            <div class="control-item">
+                                <span class="control-icon">⌨️</span>
+                                <span class="control-text">스페이스바: 게임 일시정지/재개</span>
+                            </div>
+                            <div class="control-item">
+                                <span class="control-icon">⌨️</span>
+                                <span class="control-text">ESC: 모드 선택으로 돌아가기</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h3>🎲 게임 모드</h3>
+                        <div class="mode-info">
+                            <div class="mode-item">
+                                <strong>타이머 모드:</strong> 60초 동안 최대한 많은 점수 획득
+                            </div>
+                            <div class="mode-item">
+                                <strong>무한도전 모드:</strong> 시간 제한 없이 계속 플레이 (난이도 상한선 있음)
+                            </div>
+                            <div class="mode-item">
+                                <strong>기록 모드:</strong> 60초 동안 플레이하며 리더보드에 기록 갱신
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h3>💡 게임 팁</h3>
+                        <ul>
+                            <li>높은 점수의 색상(노랑, 보라)을 우선적으로 클릭하세요</li>
+                            <li>작은 원일수록 빠르게 움직이므로 신중하게 클릭하세요</li>
+                            <li>게임이 진행될수록 난이도가 증가합니다</li>
+                            <li>일시정지를 활용해 잠시 휴식하세요</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 게임 정보 패널 -->
+        <div class="game-info" id="gameInfo" style="display: none;">
+            <div class="game-header">
+                <div class="mode-indicator">
+                    <span id="currentModeDisplay">타이머 모드</span>
+                </div>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">점수:</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">레벨:</span>
+                    <span id="level">1</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">목숨:</span>
+                    <span id="lives">3</span>
+                </div>
+                <div class="info-item" id="timerItem">
+                    <span class="label">시간:</span>
+                    <span id="timer">60</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">최고점수:</span>
+                    <span id="highScore">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <canvas id="gameCanvas" width="400" height="500" style="display: none;"></canvas>
+        
+        <!-- 리더보드 화면 -->
+        <div id="leaderboard" class="leaderboard" style="display: none;">
+            <h2>🏆 TOP 10 리더보드</h2>
+            <div class="leaderboard-content">
+                <div class="leaderboard-list" id="leaderboardList">
+                    <!-- 리더보드 데이터가 여기에 표시됩니다 -->
+                </div>
+                <div class="player-stats">
+                    <h3>나의 기록</h3>
+                    <div class="stat-item">
+                        <span>최고 점수:</span>
+                        <span id="myBestScore">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>순위:</span>
+                        <span id="myRank">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <script src="js/game.js"></script>
+</body>
+</html>
